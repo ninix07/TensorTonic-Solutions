@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Study Plan — 60 Days</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=JetBrains+Mono:wght@300;400;500&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --ink: #0e0e0e;
+            --paper: #f5f2eb;
+            --paper2: #ede9df;
+            --paper3: #e5e0d4;
+            --rule: #c8c2b4;
+            --rule2: #9a9080;
+            --accent: #c84b2f;
+            --accent2: #2f6bc8;
+            --gold: #b8922a;
+            --green: #2a7a4a;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Plus Jakarta Sans', sans-serif;
+            --serif: 'Playfair Display', serif;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--sans);
+            font-weight: 300;
+            line-height: 1.6;
+            min-height: 100vh
+        }
+
+        /* ── TICKER BAR ── */
+        .ticker {
+            border-bottom: 1px solid var(--rule);
+            background: var(--paper2);
+            display: flex;
+            align-items: center;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        .ticker-label {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: .12em;
+            color: var(--paper);
+            background: var(--ink);
+            padding: 12px 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .ticker-items {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex: 1;
+        }
+
+        .ticker-items::-webkit-scrollbar {
+            display: none
+        }
+
+        .ticker-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 22px;
+            border-right: 1px solid var(--rule);
+            white-space: nowrap;
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--rule2);
+            flex-shrink: 0;
+        }
+
+        .ticker-item strong {
+            color: var(--ink);
+            font-weight: 500
+        }
+
+        .ticker-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        /* ── PROGRESS RAIL ── */
+        .progress-rail {
+            padding: 0 56px;
+            border-bottom: 1px solid var(--rule);
+            background: var(--paper);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            height: 52px;
+        }
+
+        .progress-tag {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--rule2);
+            white-space: nowrap;
+            width: 88px;
+        }
+
+        .rail-track {
+            flex: 1;
+            height: 2px;
+            background: var(--rule);
+            position: relative;
+        }
+
+        .rail-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: var(--accent);
+            transition: width .5s ease;
+            width: 0%;
+        }
+
+        .rail-pct {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--accent);
+            width: 48px;
+            text-align: right;
+        }
+
+        /* ── STAGE TIMELINE ── */
+        .timeline-strip {
+            display: flex;
+            border-bottom: 1px solid var(--rule);
+            overflow: hidden;
+        }
+
+        .tl-block {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 0;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .1em;
+            color: rgba(255, 255, 255, .65);
+            font-weight: 500;
+            cursor: default;
+            transition: opacity .2s;
+            border-right: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .tl-block:last-child {
+            border-right: none
+        }
+
+        .tl-block:hover {
+            opacity: .8
+        }
+
+        .tl-s1 {
+            background: #1a1a2e;
+            flex: 8
+        }
+
+        .tl-s2 {
+            background: #1a2e1a;
+            flex: 12
+        }
+
+        .tl-s3 {
+            background: #1a1e2e;
+            flex: 14
+        }
+
+        .tl-s4 {
+            background: #2e1a10;
+            flex: 14
+        }
+
+        .tl-s5 {
+            background: #2e1a1a;
+            flex: 12
+        }
+
+        /* ── TIMELINE COMPLETION BAR ── */
+        /* a header row (never clips) + a bar below. Fill = % problems done; the
+           upright line = where TODAY falls. Gap + --pace colour = ahead/behind. */
+        .tl-progress {
+            padding: 14px 56px 16px;
+            background: linear-gradient(180deg, var(--paper2), var(--paper));
+            border-bottom: 1px solid var(--rule);
+            --pace: #9a9080;
+        }
+
+        .tlp-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .tlp-head-l {
+            display: flex;
+            align-items: baseline;
+            gap: 7px;
+        }
+
+        .tlp-pct {
+            font-family: var(--serif);
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--ink);
+        }
+
+        .tlp-pct-sub {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--rule2);
+        }
+
+        .tlp-verdict {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--pace);
+        }
+
+        .tlp-when {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--rule2);
+            white-space: nowrap;
+        }
+
+        /* the bar (acts as the track) */
+        .tlp-bar {
+            position: relative;
+            height: 12px;
+            background: var(--paper3);
+            border-radius: 6px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, .12);
+        }
+
+        /* completion fill — pace colour, glow + top sheen */
+        .tlp-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--pace);
+            border-radius: 6px;
+            box-shadow: 0 0 10px -2px var(--pace);
+            z-index: 2;
+            transition: width .6s cubic-bezier(.4, 0, .2, 1), background .45s ease;
+        }
+
+        .tlp-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255, 255, 255, .40), rgba(255, 255, 255, 0) 55%);
+        }
+
+        /* weekend marks — faint vertical bands inside the bar, behind the fill */
+        .tlp-weekends {
+            position: absolute;
+            inset: 0;
+            border-radius: 6px;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .tlp-we {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background: rgba(200, 75, 47, .16);
+        }
+
+        /* TODAY line — upright marker through the bar with a dot + caret on top */
+        .tlp-today {
+            position: absolute;
+            top: -4px;
+            bottom: -4px;
+            left: 0%;
+            width: 2px;
+            background: var(--ink);
+            transform: translateX(-1px);
+            z-index: 3;
+            transition: left .6s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .tlp-today::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--ink);
+            transform: translateX(-50%);
+        }
+
+        /* ── MAIN LAYOUT ── */
+        main {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 56px 80px
+        }
+
+        /* ── STAGE ── */
+        .stage {
+            margin-top: 60px
+        }
+
+        .stage-rule {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 28px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .stage-id {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--rule2);
+        }
+
+        .stage-name {
+            font-family: var(--serif);
+            font-size: 26px;
+            letter-spacing: -.01em;
+            font-weight: 700;
+        }
+
+        .stage-span {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .1em;
+            color: var(--paper);
+            padding: 5px 14px;
+            border-radius: 1px;
+        }
+
+        .stage-span.s1 {
+            background: #1a1a2e
+        }
+
+        .stage-span.s2 {
+            background: #1a2e1a
+        }
+
+        .stage-span.s3 {
+            background: #1a1e2e
+        }
+
+        .stage-span.s4 {
+            background: #2e1a10
+        }
+
+        .stage-span.s5 {
+            background: #2e1a1a
+        }
+
+        /* ── TOPIC CARD ── */
+        .topic {
+            border: 1px solid var(--rule);
+            margin-bottom: 12px;
+            background: var(--paper);
+            transition: border-color .2s;
+        }
+
+        .topic:hover {
+            border-color: var(--rule2)
+        }
+
+        .topic.complete {
+            border-color: var(--green);
+            background: rgba(42, 122, 74, .03)
+        }
+
+        .topic.complete .topic-name {
+            text-decoration: line-through;
+            text-decoration-color: rgba(42, 122, 74, .4);
+            color: var(--rule2)
+        }
+
+        .topic-head {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: start;
+            gap: 20px;
+            padding: 22px 24px 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .topic-head:hover .expand-icon {
+            color: var(--ink)
+        }
+
+        .topic-meta {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 6px;
+            flex-wrap: wrap
+        }
+
+        .topic-name {
+            font-family: var(--serif);
+            font-size: 20px;
+            letter-spacing: -.01em;
+            font-weight: 700;
+        }
+
+        .topic-days {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--rule2);
+            letter-spacing: .08em;
+        }
+
+        .topic-desc {
+            font-size: 13.5px;
+            color: var(--rule2);
+            line-height: 1.65;
+            margin-bottom: 12px
+        }
+
+        .topic-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px
+        }
+
+        .tag {
+            font-family: var(--mono);
+            font-size: 10px;
+            padding: 3px 9px;
+            letter-spacing: .04em;
+            border: 1px solid;
+        }
+
+        .tag-prereq {
+            color: #5a3ec8;
+            border-color: rgba(90, 62, 200, .25);
+            background: rgba(90, 62, 200, .06)
+        }
+
+        .tag-concept {
+            color: #2a6a8a;
+            border-color: rgba(42, 106, 138, .25);
+            background: rgba(42, 106, 138, .06)
+        }
+
+        .tag-applied {
+            color: #8a4a2a;
+            border-color: rgba(138, 74, 42, .25);
+            background: rgba(138, 74, 42, .06)
+        }
+
+        .topic-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .day-count {
+            font-family: var(--serif);
+            font-size: 34px;
+            line-height: 1;
+            color: var(--ink);
+            font-weight: 700;
+        }
+
+        .day-count-sub {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: .1em;
+            color: var(--rule2);
+            text-align: right;
+        }
+
+        .expand-icon {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--rule2);
+            transition: transform .2s, color .2s;
+            margin-top: 4px;
+        }
+
+        .topic.open .expand-icon {
+            transform: rotate(180deg)
+        }
+
+        /* ── TOPIC PROGRESS MINI ── */
+        .topic-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 24px 12px;
+        }
+
+        .tp-bar {
+            flex: 1;
+            height: 1px;
+            background: var(--rule);
+            position: relative
+        }
+
+        .tp-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: var(--green);
+            transition: width .3s
+        }
+
+        .tp-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--rule2);
+            white-space: nowrap
+        }
+
+        /* ── PROBLEMS TABLE ── */
+        .problems {
+            display: none;
+            border-top: 1px solid var(--rule)
+        }
+
+        .topic.open .problems {
+            display: block
+        }
+
+        .prob-head {
+            display: grid;
+            grid-template-columns: 40px 1fr 96px 76px 76px;
+            padding: 9px 24px;
+            background: var(--paper2);
+            border-bottom: 1px solid var(--rule);
+            gap: 12px;
+        }
+
+        .ph-cell {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--rule2);
+        }
+
+        .ph-cell.right {
+            text-align: center
+        }
+
+        .prob-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 96px 76px 76px;
+            padding: 11px 24px;
+            gap: 12px;
+            border-bottom: 1px solid var(--paper3);
+            align-items: center;
+            transition: background .15s;
+        }
+
+        .prob-row:last-child {
+            border-bottom: none
+        }
+
+        .prob-row:hover {
+            background: var(--paper2)
+        }
+
+        .prob-row.both-done {
+            background: rgba(42, 122, 74, .04)
+        }
+
+        .prob-row.both-done .prob-name {
+            color: var(--rule2);
+            text-decoration: line-through;
+            text-decoration-color: rgba(42, 122, 74, .35)
+        }
+
+        .prob-num {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--rule2);
+        }
+
+        .prob-name {
+            font-size: 13.5px;
+            font-weight: 400;
+            line-height: 1.35;
+        }
+
+        .diff {
+            font-family: var(--mono);
+            font-size: 10px;
+            padding: 3px 9px;
+            text-align: center;
+            border: 1px solid;
+            width: fit-content;
+            letter-spacing: .04em;
+        }
+
+        .diff.easy {
+            color: var(--green);
+            border-color: rgba(42, 122, 74, .3);
+            background: rgba(42, 122, 74, .06)
+        }
+
+        .diff.medium {
+            color: var(--gold);
+            border-color: rgba(184, 146, 42, .3);
+            background: rgba(184, 146, 42, .06)
+        }
+
+        .diff.hard {
+            color: var(--accent);
+            border-color: rgba(200, 75, 47, .3);
+            background: rgba(200, 75, 47, .06)
+        }
+
+        /* ── DUAL CHECKBOXES ── */
+        .check-pair {
+            display: flex;
+            gap: 4px;
+            justify-content: center
+        }
+
+        .chk-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+        }
+
+        .chk-box {
+            width: 22px;
+            height: 22px;
+            border: 1.5px solid var(--rule);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .15s;
+            background: var(--paper);
+            flex-shrink: 0;
+        }
+
+        .chk-box:hover {
+            border-color: var(--rule2)
+        }
+
+        .chk-box.on-theory {
+            background: #1a1a2e;
+            border-color: #1a1a2e
+        }
+
+        .chk-box.on-solve {
+            background: var(--green);
+            border-color: var(--green)
+        }
+
+        .chk-box svg {
+            display: none
+        }
+
+        .chk-box.on-theory svg,
+        .chk-box.on-solve svg {
+            display: block
+        }
+
+        .chk-lbl {
+            font-family: var(--mono);
+            font-size: 8px;
+            letter-spacing: .04em;
+            color: var(--rule2);
+            text-transform: uppercase;
+        }
+
+        /* ── CONNECTOR ── */
+        .stage-connector {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 16px 0 0;
+            padding-left: 0;
+        }
+
+        .conn-line {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, var(--rule), var(--accent));
+            margin-left: 16px;
+        }
+
+        .conn-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--accent);
+            letter-spacing: .1em;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 32px 56px;
+            border-top: 2px solid var(--ink);
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--rule2);
+            letter-spacing: .08em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media(max-width:680px) {
+
+            .tl-progress,
+            .progress-rail,
+            main,
+            footer {
+                padding-left: 20px;
+                padding-right: 20px
+            }
+
+            .prob-head,
+            .prob-row {
+                grid-template-columns: 32px 1fr 74px 60px 60px;
+                gap: 8px;
+                padding: 9px 14px
+            }
+
+            .topic-head {
+                padding: 16px 16px 12px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Stage timeline -->
+    <div class="timeline-strip">
+        <div class="tl-block tl-s1">S1 · DAYS 1–8</div>
+        <div class="tl-block tl-s2">S2 · DAYS 9–20</div>
+        <div class="tl-block tl-s3">S3 · DAYS 21–34</div>
+        <div class="tl-block tl-s4">S4 · DAYS 35–48</div>
+        <div class="tl-block tl-s5">S5 · DAYS 49–60</div>
+    </div>
+
+    <!-- Completion bar: fill = % problems done, upright line = where today falls -->
+    <div class="tl-progress">
+        <div class="tlp-head">
+            <span class="tlp-head-l">
+                <span class="tlp-pct" id="tlp-pct">0%</span>
+                <span class="tlp-pct-sub">complete</span>
+                <span class="tlp-verdict" id="tlp-verdict">· not started</span>
+            </span>
+            <span class="tlp-when" id="tlp-when">Day 1 of 60 · begins Saturday</span>
+        </div>
+        <div class="tlp-bar">
+            <div class="tlp-weekends" id="tlp-weekends" title="Weekend cram-days (Sat/Sun)"></div>
+            <div class="tlp-fill" id="tlp-fill"></div>
+            <div class="tlp-today" id="tlp-today"></div>
+        </div>
+    </div>
+
+    <!-- Progress rail -->
+    <div class="ticker">
+        <div class="ticker-label">PROGRESS</div>
+        <div class="ticker-items" id="ticker-items">
+            <div class="ticker-item">
+                <div class="ticker-dot" style="background:#1a1a2e"></div>Stage 1 · <strong>8</strong> days
+            </div>
+            <div class="ticker-item">
+                <div class="ticker-dot" style="background:#1a2e1a"></div>Stage 2 · <strong>12</strong> days
+            </div>
+            <div class="ticker-item">
+                <div class="ticker-dot" style="background:#1a1e2e"></div>Stage 3 · <strong>14</strong> days
+            </div>
+            <div class="ticker-item">
+                <div class="ticker-dot" style="background:#2e1a10"></div>Stage 4 · <strong>14</strong> days
+            </div>
+            <div class="ticker-item">
+                <div class="ticker-dot" style="background:#2e1a1a"></div>Stage 5 · <strong>12</strong> days
+            </div>
+            <div class="ticker-item"><strong id="t-done">0</strong>&nbsp;/ <span id="t-total">0</span> problems complete
+            </div>
+            <div class="ticker-item"><strong id="t-topics">0</strong>&nbsp;/ 18 topics done</div>
+        </div>
+    </div>
+
+    <div class="progress-rail">
+        <span class="progress-tag">Overall</span>
+        <div class="rail-track">
+            <div class="rail-fill" id="rail-fill"></div>
+        </div>
+        <span class="rail-pct" id="rail-pct">0%</span>
+    </div>
+
+    <main id="main"></main>
+
+
+    <footer>
+        <span>Progress saved · started <span id="f-start">—</span></span>
+        <span id="f-brand">TensorTonic · 60-Day ML Plan</span>
+        <span id="f-days">60 days remaining</span>
+    </footer>
+
+    <script>
+        const K = 'tt-plan-v2';
+
+        // ── INTENSITY MODEL ──  (smooth split into a fixed TARGET_DAYS plan)
+        // Effort per topic = Σ DIFF_WEIGHT (per-problem effort) × CONCEPT_FACTOR
+        // (per-topic conceptual difficulty). Day allocation, summing to TARGET_DAYS:
+        //   1. floor each topic at max(MIN_DAYS, ceil(problems / MAX_PER_DAY)) — every
+        //      topic gets real time, and no day ever exceeds MAX_PER_DAY problems.
+        //   2. hand the SPARE days to heavier topics ∝ effort^SPREAD_P, so concept-
+        //      heavy topics (backprop, transformers, RL) run at a low problems/day
+        //      pace while trivial/mechanical topics stay denser.
+        // Result is smoothly graded (no calendar-position spikes). Weekends are a
+        // pure visual overlay (day 1 = START_DOW), they do not distort the split.
+        // Single source of truth for every day label, stage span, ticker, timeline.
+        const TARGET_DAYS = 60;       // hard deadline — plan always fits this
+        const MIN_DAYS = 2;           // floor: every topic gets at least this many days
+        const MAX_PER_DAY = 5;        // problems/day ceiling for any single topic
+        const SPREAD_P = 1.3;         // >1 gives concept-heavy topics extra days
+        const START_DOW = 5;          // 0=Mon … 5=Sat, 6=Sun ; plan day 1 lands here (Sat)
+        const DIFF_WEIGHT = { easy: 1, medium: 1.7, hard: 2.6 };
+        const CONCEPT_FACTOR = {
+            t01: 0.85, // Linear Algebra — mostly mechanical
+            t02: 0.70, // Probability & Stats — formula plug-ins
+            t03: 1.00, // Classic ML
+            t04: 0.75, // Data Processing — applied, quick
+            t05: 0.65, // Feature Engineering — light transforms
+            t06: 1.45, // Neural Networks — backprop is dense
+            t07: 0.50, // Activation Functions — trivial, pack tight
+            t08: 0.70, // Loss Functions — mostly formulas
+            t09: 1.10, // Optimization — many subtly-different optimizers
+            t10: 0.80, // Metrics — mostly formulas
+            t11: 1.00, // NLP
+            t12: 1.70, // Transformers — heavy concept, few problems
+            t13: 0.80, // MLOps — light coding
+            t14: 1.00, // Computer Vision
+            t15: 0.95, // 3D Geometry
+            t16: 0.70, // Time Series — mechanical
+            t17: 0.75, // Recommender Systems — mostly easy
+            t18: 1.50, // Reinforcement Learning — most conceptually distinct
+        };
+
+        let PLAN_DAYS = 60;          // total length — computed by computeSchedule()
+        const TOPIC_SCHEDULE = {};   // {id: {dayStart, dayEnd}} — filled by computeSchedule()
+        let STAGE_SPANS = [];        // ['Days a–b', ...]            — filled by computeSchedule()
+        let STAGE_DAYS = [];         // [nDays per stage]            — filled by computeSchedule()
+        const DIFF_ORDER = { easy: 0, medium: 1, hard: 2 };
+        const SVG_W = `<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><polyline points="1,4 3.5,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+        function loadState() { try { return JSON.parse(localStorage.getItem(K) || '{}') } catch { return {} } }
+        function saveState(s) { try { localStorage.setItem(K, JSON.stringify(s)) } catch { } }
+        let ST = loadState();
+        function getC(id, t) { return !!(ST[id] && ST[id][t]) }
+        function setC(id, t, v) {
+            if (!ST[id]) ST[id] = {};
+            ST[id][t] = v;
+            if (v && !ST['__startDate']) ST['__startDate'] = Date.now();
+            saveState(ST);
+        }
+        function sortedProbs(probs) { return [...probs].sort((a, b) => DIFF_ORDER[a.d] - DIFF_ORDER[b.d]); }
+
+        const PLAN = [
+            {
+                stage: 1, label: 'Math Foundations', days: 'Days 1–8', cls: 's1',
+                topics: [
+                    {
+                        id: 't01', name: 'Linear Algebra', days: 'Days 1–4', dayN: 4, qs: 17,
+                        desc: 'Vectors, matrices, eigenvalues, distances — the language every ML formula is written in.',
+                        tags: [{ l: 'Prerequisite for all stages', c: 'prereq' }, { l: 'vectors', c: 'concept' }, { l: 'eigenvalues', c: 'concept' }],
+                        probs: [
+                            { id: 'p4', n: '4', name: 'Matrix Transpose', d: 'easy' },
+                            { id: 'p17', n: '17', name: 'Implement Manhattan Distance', d: 'easy' },
+                            { id: 'p18', n: '18', name: 'Implement Euclidean Distance', d: 'easy' },
+                            { id: 'p26', n: '26', name: 'Implement Cosine Similarity', d: 'easy' },
+                            { id: 'p36', n: '36', name: 'Implement Dot Product', d: 'easy' },
+                            { id: 'p37', n: '37', name: 'Implement Matrix Normalization', d: 'medium' },
+                            { id: 'p40', n: '40', name: 'Calculate Eigenvalues of a Matrix', d: 'medium' },
+                            { id: 'p41', n: '41', name: 'Compute Covariance Matrix', d: 'easy' },
+                            { id: 'p42', n: '42', name: 'Compute Pearson Correlation Matrix', d: 'medium' },
+                            { id: 'p82', n: '82', name: 'Matrix Trace', d: 'easy' },
+                            { id: 'p86', n: '86', name: 'Make Diagonal Matrix', d: 'easy' },
+                            { id: 'p87', n: '87', name: 'Matrix Inverse', d: 'medium' },
+                            { id: 'p143', n: '143', name: 'Linear Regression Closed Form', d: 'medium' },
+                            { id: 'p148', n: '148', name: 'PCA Projection', d: 'hard' },
+                            { id: 'p5', n: '5', name: 'Implement Positional Encoding (sin/cos)', d: 'medium' },
+                            { id: 'p38', n: '38', name: 'Implement TF-IDF Vectorizer', d: 'hard' },
+                            { id: 'p39', n: '39', name: 'Implement BM25 Ranking Score', d: 'hard' },
+                        ]
+                    },
+                    {
+                        id: 't02', name: 'Probability & Statistics', days: 'Days 5–8', dayN: 4, qs: 11,
+                        desc: 'Distributions, Bayes, MLE, hypothesis testing — ML is applied statistics.',
+                        tags: [{ l: 'Prerequisite for all stages', c: 'prereq' }, { l: 'distributions', c: 'concept' }, { l: 'MLE', c: 'concept' }],
+                        probs: [
+                            { id: 'p13', n: '13', name: 'Expected Value (Discrete Distribution)', d: 'easy' },
+                            { id: 'p59', n: '59', name: 'Bernoulli PMF & Moments', d: 'easy' },
+                            { id: 'p60', n: '60', name: 'Binomial Probability Mass Function', d: 'easy' },
+                            { id: 'p61', n: '61', name: 'Poisson PMF & Cumulative', d: 'medium' },
+                            { id: 'p62', n: '62', name: 'Geometric PMF & Mean', d: 'easy' },
+                            { id: 'p63', n: '63', name: 'Mean, Median, Mode', d: 'easy' },
+                            { id: 'p64', n: '64', name: 'Sample Variance & Standard Deviation', d: 'easy' },
+                            { id: 'p65', n: '65', name: 'Percentiles / Quantiles', d: 'easy' },
+                            { id: 'p66', n: '66', name: 'Chi-Square Test', d: 'medium' },
+                            { id: 'p67', n: '67', name: 'One-Sample t-Test', d: 'medium' },
+                            { id: 'p83', n: '83', name: 'Bootstrap Mean & Confidence Interval', d: 'medium' },
+                        ]
+                    },
+                ]
+            },
+            {
+                stage: 2, label: 'Classic Machine Learning', days: 'Days 9–20', cls: 's2',
+                topics: [
+                    {
+                        id: 't03', name: 'Classic ML', days: 'Days 9–14', dayN: 6, qs: 14,
+                        desc: 'Regression, trees, SVMs, k-NN, k-means. Understand the learning loop before adding neural complexity.',
+                        tags: [{ l: 'regression', c: 'concept' }, { l: 'trees', c: 'concept' }, { l: 'clustering', c: 'concept' }],
+                        probs: [
+                            { id: 'p14', n: '14', name: 'Compute Entropy for a Node', d: 'easy' },
+                            { id: 'p77', n: '77', name: 'Compute Gini Impurity for a Split', d: 'medium' },
+                            { id: 'p78', n: '78', name: 'Implement Majority Class Classifier', d: 'easy' },
+                            { id: 'p79', n: '79', name: 'KNN Distance + Neighbor Lookup', d: 'medium' },
+                            { id: 'p80', n: '80', name: 'Naive Bayes Log-Likelihood (Bernoulli)', d: 'hard' },
+                            { id: 'p81', n: '81', name: 'Compute Information Gain for a Split', d: 'medium' },
+                            { id: 'p144', n: '144', name: 'K-Means Assignment Step', d: 'easy' },
+                            { id: 'p145', n: '145', name: 'K-Means Centroid Update', d: 'medium' },
+                            { id: 'p146', n: '146', name: 'Random Forest Majority Vote', d: 'medium' },
+                            { id: 'p147', n: '147', name: 'Ridge Regression', d: 'medium' },
+                            { id: 'p149', n: '149', name: 'Decision Tree Best Split', d: 'hard' },
+                            { id: 'p150', n: '150', name: 'Gaussian Naive Bayes', d: 'hard' },
+                            { id: 'p143b', n: '143', name: 'Linear Regression Closed Form', d: 'medium' },
+                            { id: 'p148b', n: '148', name: 'PCA Projection', d: 'hard' },
+                        ]
+                    },
+                    {
+                        id: 't04', name: 'Data Processing', days: 'Days 15–17', dayN: 3, qs: 14,
+                        desc: 'Normalisation, missing values, splits, stratification, streaming pipelines.',
+                        tags: [{ l: 'applied', c: 'applied' }, { l: 'normalisation', c: 'concept' }, { l: 'splits', c: 'concept' }],
+                        probs: [
+                            { id: 'p3', n: '3', name: 'Pad Sequences', d: 'medium' },
+                            { id: 'p27', n: '27', name: 'Implement Min-Max Normalization', d: 'easy' },
+                            { id: 'p28', n: '28', name: 'Implement z-Score Standardization', d: 'easy' },
+                            { id: 'p68', n: '68', name: 'Stratified Train/Test Split', d: 'hard' },
+                            { id: 'p69', n: '69', name: 'Batch Shuffling & Mini-Batch Generator', d: 'medium' },
+                            { id: 'p70', n: '70', name: 'Impute Missing Values (mean/median)', d: 'hard' },
+                            { id: 'p71', n: '71', name: 'One-Hot Encoding (Multi-class)', d: 'medium' },
+                            { id: 'p72', n: '72', name: 'Streaming Min-Max Normalization', d: 'medium' },
+                            { id: 'p85', n: '85', name: 'K-Fold Split (Indices Only)', d: 'hard' },
+                            { id: 'p100', n: '100', name: 'Remove Stopwords', d: 'easy' },
+                            { id: 'p156', n: '156', name: 'Text Chunking', d: 'easy' },
+                            { id: 'p165', n: '165', name: 'Linear Interpolation', d: 'medium' },
+                            { id: 'p172', n: '172', name: 'Binning', d: 'easy' },
+                            { id: 'p184', n: '184', name: 'Log Transform', d: 'easy' },
+                        ]
+                    },
+                    {
+                        id: 't05', name: 'Feature Engineering', days: 'Days 18–20', dayN: 3, qs: 14,
+                        desc: 'Encoding, interaction terms, polynomial features, target encoding — often more impactful than model choice.',
+                        tags: [{ l: 'applied', c: 'applied' }, { l: 'encoding', c: 'concept' }, { l: 'transforms', c: 'concept' }],
+                        probs: [
+                            { id: 'p101', n: '101', name: 'Bag-of-Words Vector', d: 'easy' },
+                            { id: 'p170', n: '170', name: 'Target Encoding', d: 'easy' },
+                            { id: 'p171', n: '171', name: 'Polynomial Features', d: 'easy' },
+                            { id: 'p173', n: '173', name: 'Interaction Features', d: 'easy' },
+                            { id: 'p175', n: '175', name: 'Lag Features', d: 'easy' },
+                            { id: 'p182', n: '182', name: 'Ordinal Encoding', d: 'easy' },
+                            { id: 'p183', n: '183', name: 'Frequency Encoding', d: 'easy' },
+                            { id: 'p185', n: '185', name: 'Min-Max Scaling', d: 'medium' },
+                            { id: 'p186', n: '186', name: 'Cyclic Encoding', d: 'easy' },
+                            { id: 'p197', n: '197', name: 'Robust Scaling', d: 'medium' },
+                            { id: 'p198', n: '198', name: 'Rank Transform', d: 'easy' },
+                            { id: 'p199', n: '199', name: 'Winsorization', d: 'medium' },
+                            { id: 'p38b', n: '38', name: 'Implement TF-IDF Vectorizer', d: 'hard' },
+                            { id: 'p72b', n: '72', name: 'Streaming Min-Max Normalization', d: 'medium' },
+                        ]
+                    },
+                ]
+            },
+            {
+                stage: 3, label: 'Deep Learning Core', days: 'Days 21–34', cls: 's3',
+                topics: [
+                    {
+                        id: 't06', name: 'Neural Networks', days: 'Days 21–25', dayN: 5, qs: 11,
+                        desc: 'Perceptrons, forward pass, backpropagation, pooling, batch norm — the engine underneath all modern ML.',
+                        tags: [{ l: 'Core foundation', c: 'prereq' }, { l: 'backprop', c: 'concept' }, { l: 'layers', c: 'concept' }],
+                        probs: [
+                            { id: 'p8', n: '8', name: 'Implement Dropout (Training Mode)', d: 'medium' },
+                            { id: 'p19', n: '19', name: 'Build a Mini GRU Cell (Forward Pass)', d: 'medium' },
+                            { id: 'p21', n: '21', name: 'Implement Global Average Pooling', d: 'medium' },
+                            { id: 'p22', n: '22', name: 'Implement a Simple CNN Layer (NumPy)', d: 'medium' },
+                            { id: 'p32', n: '32', name: 'Batch Normalization (Forward)', d: 'medium' },
+                            { id: 'p84', n: '84', name: 'RNN Step Forward (Tanh Cell)', d: 'easy' },
+                            { id: 'p89', n: '89', name: 'RNN Step Backward (Vanilla RNN)', d: 'medium' },
+                            { id: 'p151', n: '151', name: 'Linear Layer Forward', d: 'easy' },
+                            { id: 'p152', n: '152', name: 'Xavier Initialization', d: 'easy' },
+                            { id: 'p153', n: '153', name: 'He Initialization', d: 'easy' },
+                            { id: 'p154', n: '154', name: 'Max Pooling Forward', d: 'medium' },
+                        ]
+                    },
+                    {
+                        id: 't07', name: 'Activation Functions', days: 'Days 26–27', dayN: 2, qs: 9,
+                        desc: 'Sigmoid, ReLU, Leaky ReLU, GELU, Swish, ELU, SELU, Softmax — without these all depth collapses to linear.',
+                        tags: [{ l: 'ReLU', c: 'concept' }, { l: 'GELU', c: 'concept' }, { l: 'softmax', c: 'concept' }],
+                        probs: [
+                            { id: 'p1', n: '1', name: 'Implement Sigmoid in NumPy', d: 'easy' },
+                            { id: 'p23', n: '23', name: 'Implement Leaky ReLU (with α)', d: 'easy' },
+                            { id: 'p25', n: '25', name: 'Implement Softmax Function', d: 'medium' },
+                            { id: 'p35', n: '35', name: 'Implement GELU Activation', d: 'medium' },
+                            { id: 'p49', n: '49', name: 'Implement ReLU Activation', d: 'easy' },
+                            { id: 'p50', n: '50', name: 'Implement Tanh Activation', d: 'easy' },
+                            { id: 'p51', n: '51', name: 'Implement Swish Activation', d: 'easy' },
+                            { id: 'p132', n: '132', name: 'ELU Activation', d: 'easy' },
+                            { id: 'p133', n: '133', name: 'SELU Activation', d: 'easy' },
+                        ]
+                    },
+                    {
+                        id: 't08', name: 'Loss Functions', days: 'Days 28–30', dayN: 3, qs: 15,
+                        desc: 'Cross-entropy, hinge, contrastive, InfoNCE, focal, Wasserstein — the loss defines what "better" means.',
+                        tags: [{ l: 'cross-entropy', c: 'concept' }, { l: 'contrastive', c: 'concept' }, { l: 'focal', c: 'concept' }],
+                        probs: [
+                            { id: 'p2', n: '2', name: 'Logistic Regression Training Loop', d: 'medium' },
+                            { id: 'p16', n: '16', name: 'Implement Cross-Entropy Loss', d: 'medium' },
+                            { id: 'p33', n: '33', name: 'Implement Hinge Loss (Binary SVM)', d: 'easy' },
+                            { id: 'p34', n: '34', name: 'Implement Contrastive Loss (Siamese)', d: 'medium' },
+                            { id: 'p52', n: '52', name: 'Implement Huber Loss', d: 'easy' },
+                            { id: 'p53', n: '53', name: 'Implement Triplet Loss', d: 'medium' },
+                            { id: 'p54', n: '54', name: 'Implement InfoNCE Loss', d: 'hard' },
+                            { id: 'p55', n: '55', name: 'Implement Focal Loss', d: 'medium' },
+                            { id: 'p56', n: '56', name: 'Implement Dice Loss', d: 'medium' },
+                            { id: 'p57', n: '57', name: 'Implement KL Divergence', d: 'medium' },
+                            { id: 'p58', n: '58', name: 'Implement Wasserstein Critic Loss', d: 'easy' },
+                            { id: 'p88', n: '88', name: 'Mean Squared Error (MSE)', d: 'easy' },
+                            { id: 'p134', n: '134', name: 'Label Smoothing Loss', d: 'medium' },
+                            { id: 'p135', n: '135', name: 'Cosine Embedding Loss', d: 'easy' },
+                            { id: 'p136', n: '136', name: 'Binary Focal Loss', d: 'medium' },
+                        ]
+                    },
+                    {
+                        id: 't09', name: 'Optimization', days: 'Days 31–34', dayN: 4, qs: 13,
+                        desc: 'SGD, Adam, AdaGrad, AdaDelta, Nadam, LR schedulers, gradient clipping — how gradients become weight updates.',
+                        tags: [{ l: 'Adam', c: 'concept' }, { l: 'LR schedules', c: 'concept' }, { l: 'momentum', c: 'concept' }],
+                        probs: [
+                            { id: 'p6', n: '6', name: 'Implement Gradient Descent for a 1D Quadratic', d: 'easy' },
+                            { id: 'p7', n: '7', name: 'Implement Adam Optimizer Step', d: 'easy' },
+                            { id: 'p8b', n: '8', name: 'RMSProp Optimizer (Single Update Step)', d: 'easy' },
+                            { id: 'p31', n: '31', name: 'Learning Rate Scheduler (Linear Decay)', d: 'medium' },
+                            { id: 'p43', n: '43', name: 'Gradient Clipping (Global Norm)', d: 'medium' },
+                            { id: 'p44', n: '44', name: 'AdaGrad Optimizer', d: 'easy' },
+                            { id: 'p45', n: '45', name: 'Implement Nesterov Momentum (NAG)', d: 'easy' },
+                            { id: 'p46', n: '46', name: 'Implement AdamW (Decoupled Weight Decay)', d: 'easy' },
+                            { id: 'p47', n: '47', name: 'Implement AdaDelta Update Step', d: 'medium' },
+                            { id: 'p48', n: '48', name: 'Implement Nadam (Nesterov + Adam)', d: 'medium' },
+                            { id: 'p125', n: '125', name: 'Warmup + Linear Decay LR Schedule', d: 'easy' },
+                            { id: 'p126', n: '126', name: 'Cosine Annealing LR Scheduler', d: 'easy' },
+                            { id: 'p127', n: '127', name: 'L-BFGS Two-Loop Recursion', d: 'hard' },
+                        ]
+                    },
+                ]
+            },
+            {
+                stage: 4, label: 'Evaluation + Modern Architectures', days: 'Days 35–48', cls: 's4',
+                topics: [
+                    {
+                        id: 't10', name: 'Metrics & Evaluation', days: 'Days 35–37', dayN: 3, qs: 18,
+                        desc: 'Accuracy, F1, ROC-AUC, mAP, calibration, confusion matrices — you cannot improve what you measure wrong.',
+                        tags: [{ l: 'classification', c: 'concept' }, { l: 'calibration', c: 'concept' }, { l: 'ranking', c: 'concept' }],
+                        probs: [
+                            { id: 'p15', n: '15', name: 'Implement Micro-F1', d: 'easy' },
+                            { id: 'p24', n: '24', name: 'Compute Silhouette Score', d: 'medium' },
+                            { id: 'p29', n: '29', name: 'Compute Accuracy, Precision, Recall, F1', d: 'medium' },
+                            { id: 'p30', n: '30', name: 'Implement R² Score', d: 'easy' },
+                            { id: 'p73', n: '73', name: 'Compute ROC Curve from Scores', d: 'hard' },
+                            { id: 'p74', n: '74', name: 'Compute AUC (Area Under ROC)', d: 'easy' },
+                            { id: 'p75', n: '75', name: 'Compute Mean Average Precision (mAP)', d: 'hard' },
+                            { id: 'p76', n: '76', name: 'Compute Confusion Matrix with Normalization', d: 'hard' },
+                            { id: 'p113', n: '113', name: 'Cohen\'s Kappa', d: 'easy' },
+                            { id: 'p114', n: '114', name: 'Log Loss (Per-Sample)', d: 'easy' },
+                            { id: 'p115', n: '115', name: 'Expected Calibration Error', d: 'medium' },
+                            { id: 'p116', n: '116', name: 'NDCG (Normalized Discounted Cumulative Gain)', d: 'medium' },
+                            { id: 'p117', n: '117', name: 'Isotonic Regression Calibration', d: 'hard' },
+                            { id: 'p118', n: '118', name: 'Intersection over Union (IoU)', d: 'easy' },
+                            { id: 'p14b', n: '14', name: 'Precision and Recall at K', d: 'easy' },
+                            { id: 'p157', n: '157', name: 'BLEU Score', d: 'hard' },
+                            { id: 'p192', n: '192', name: 'Catalog Coverage', d: 'easy' },
+                            { id: 'p194', n: '194', name: 'Hit Rate at K', d: 'easy' },
+                        ]
+                    },
+                    {
+                        id: 't11', name: 'NLP', days: 'Days 38–41', dayN: 4, qs: 14,
+                        desc: 'Tokenisation, n-grams, bag-of-words, RNN cells, perplexity — text is everywhere, this opens the door to modern AI.',
+                        tags: [{ l: 'tokenisation', c: 'concept' }, { l: 'RNN', c: 'concept' }, { l: 'language models', c: 'concept' }],
+                        probs: [
+                            { id: 'p3b', n: '3', name: 'Pad Sequences', d: 'medium' },
+                            { id: 'p19b', n: '19', name: 'Build a Mini GRU Cell (Forward Pass)', d: 'medium' },
+                            { id: 'p84b', n: '84', name: 'RNN Step Forward (Tanh Cell)', d: 'easy' },
+                            { id: 'p89b', n: '89', name: 'RNN Step Backward (Vanilla RNN)', d: 'medium' },
+                            { id: 'p99', n: '99', name: 'Bigram Probabilities (Add-1 Smoothing)', d: 'hard' },
+                            { id: 'p100b', n: '100', name: 'Remove Stopwords', d: 'easy' },
+                            { id: 'p101b', n: '101', name: 'Bag-of-Words Vector', d: 'easy' },
+                            { id: 'p102', n: '102', name: 'Word Count Dictionary', d: 'easy' },
+                            { id: 'p155', n: '155', name: 'Edit Distance', d: 'easy' },
+                            { id: 'p156b', n: '156', name: 'Text Chunking', d: 'easy' },
+                            { id: 'p157b', n: '157', name: 'BLEU Score', d: 'hard' },
+                            { id: 'p158', n: '158', name: 'Perplexity Computation', d: 'easy' },
+                            { id: 'p38c', n: '38', name: 'Implement TF-IDF Vectorizer', d: 'hard' },
+                            { id: 'p39b', n: '39', name: 'Implement BM25 Ranking Score', d: 'hard' },
+                        ]
+                    },
+                    {
+                        id: 't12', name: 'Transformers', days: 'Days 42–46', dayN: 5, qs: 2,
+                        desc: 'Positional encoding, causal masking — the dominant architecture in modern ML.',
+                        tags: [{ l: 'Requires NLP', c: 'prereq' }, { l: 'attention', c: 'concept' }, { l: 'GPT', c: 'concept' }],
+                        probs: [
+                            { id: 'p5b', n: '5', name: 'Implement Positional Encoding (sin/cos)', d: 'medium' },
+                            { id: 'p20', n: '20', name: 'Implement Causal Masking for Attention', d: 'medium' },
+                        ]
+                    },
+                    {
+                        id: 't13', name: 'MLOps', days: 'Days 47–48', dayN: 2, qs: 10,
+                        desc: 'Drift detection, versioning, feature stores, ETL, shadow deployments — bridging training to production.',
+                        tags: [{ l: 'applied', c: 'applied' }, { l: 'drift', c: 'concept' }, { l: 'ETL', c: 'concept' }],
+                        probs: [
+                            { id: 'p103', n: '103', name: 'Detect Train-Serving Skew', d: 'medium' },
+                            { id: 'p104', n: '104', name: 'Model Versioning', d: 'easy' },
+                            { id: 'p105', n: '105', name: 'Feature Store Lookup', d: 'easy' },
+                            { id: 'p106', n: '106', name: 'Data Drift Detection', d: 'easy' },
+                            { id: 'p107', n: '107', name: 'Monitoring Metrics Selection', d: 'hard' },
+                            { id: 'p108', n: '108', name: 'Retraining Trigger Design', d: 'hard' },
+                            { id: 'p109', n: '109', name: 'Shadow Deployment Evaluation', d: 'medium' },
+                            { id: 'p110', n: '110', name: 'ETL Schema Validation', d: 'hard' },
+                            { id: 'p111', n: '111', name: 'ETL Deduplication', d: 'easy' },
+                            { id: 'p112', n: '112', name: 'ETL Dependency Orchestration', d: 'hard' },
+                        ]
+                    },
+                ]
+            },
+            {
+                stage: 5, label: 'Specialisations', days: 'Days 49–60', cls: 's5',
+                topics: [
+                    {
+                        id: 't14', name: 'Computer Vision', days: 'Days 49–51', dayN: 3, qs: 15,
+                        desc: 'Convolutions, pooling, NMS, anchor boxes, ROI pooling, edge detection, morphology.',
+                        tags: [{ l: 'CNNs', c: 'concept' }, { l: 'detection', c: 'concept' }, { l: 'image ops', c: 'concept' }],
+                        probs: [
+                            { id: 'p10', n: '10', name: 'Anchor Box Generation', d: 'medium' },
+                            { id: 'p118b', n: '118', name: 'Intersection over Union (IoU)', d: 'easy' },
+                            { id: 'p119', n: '119', name: 'Non-Maximum Suppression', d: 'medium' },
+                            { id: 'p120', n: '120', name: '2D Convolution (Image Filtering)', d: 'medium' },
+                            { id: 'p121', n: '121', name: 'Bilinear Interpolation', d: 'medium' },
+                            { id: 'p122', n: '122', name: 'ROI Pooling', d: 'hard' },
+                            { id: 'p123', n: '123', name: 'Image Histogram', d: 'easy' },
+                            { id: 'p124', n: '124', name: 'Gaussian Blur Kernel', d: 'medium' },
+                            { id: 'p128', n: '128', name: 'Sobel Edge Detection', d: 'medium' },
+                            { id: 'p129', n: '129', name: 'Histogram Equalization', d: 'medium' },
+                            { id: 'p130', n: '130', name: 'Morphological Erosion and Dilation', d: 'medium' },
+                            { id: 'p131', n: '131', name: 'Image Rotation (Nearest Neighbor)', d: 'medium' },
+                            { id: 'p159', n: '159', name: 'Max Pooling 2D', d: 'medium' },
+                            { id: 'p160', n: '160', name: 'Average Pooling 2D', d: 'medium' },
+                            { id: 'p161', n: '161', name: 'Color to Grayscale', d: 'easy' },
+                        ]
+                    },
+                    {
+                        id: 't15', name: '3D Geometry', days: 'Days 52–53', dayN: 2, qs: 5,
+                        desc: 'Homogeneous transforms, vector norms, 3D rotations — essential for robotics and spatial computing.',
+                        tags: [{ l: 'Requires CV', c: 'prereq' }, { l: 'transforms', c: 'concept' }, { l: 'rotations', c: 'concept' }],
+                        probs: [
+                            { id: 'p11', n: '11', name: 'Apply 4×4 Homogeneous Transform', d: 'medium' },
+                            { id: 'p95', n: '95', name: 'Compute 3D Vector Norm', d: 'easy' },
+                            { id: 'p96', n: '96', name: 'Normalize 3D Vectors', d: 'easy' },
+                            { id: 'p97', n: '97', name: 'Angle Between 3D Vectors', d: 'medium' },
+                            { id: 'p98', n: '98', name: 'Rotate 3D Point Around Z-Axis', d: 'medium' },
+                        ]
+                    },
+                    {
+                        id: 't16', name: 'Time Series', days: 'Days 54–56', dayN: 3, qs: 13,
+                        desc: 'Moving averages, autocorrelation, differencing, interpolation, seasonal averages, exponential smoothing.',
+                        tags: [{ l: 'forecasting', c: 'concept' }, { l: 'smoothing', c: 'concept' }, { l: 'stationarity', c: 'concept' }],
+                        probs: [
+                            { id: 'p162', n: '162', name: 'Simple Moving Average', d: 'easy' },
+                            { id: 'p163', n: '163', name: 'Exponential Moving Average', d: 'easy' },
+                            { id: 'p164', n: '164', name: 'Autocorrelation', d: 'medium' },
+                            { id: 'p165b', n: '165', name: 'Linear Interpolation', d: 'medium' },
+                            { id: 'p174', n: '174', name: 'Differencing', d: 'easy' },
+                            { id: 'p176', n: '176', name: 'Weighted Moving Average', d: 'easy' },
+                            { id: 'p177', n: '177', name: 'Rolling Standard Deviation', d: 'medium' },
+                            { id: 'p187', n: '187', name: 'Percent Change', d: 'easy' },
+                            { id: 'p188', n: '188', name: 'Moving Median', d: 'easy' },
+                            { id: 'p189', n: '189', name: 'Double Exponential Smoothing', d: 'medium' },
+                            { id: 'p190', n: '190', name: 'Cumulative Returns', d: 'easy' },
+                            { id: 'p191', n: '191', name: 'Seasonal Average', d: 'medium' },
+                            { id: 'p175b', n: '175', name: 'Lag Features', d: 'easy' },
+                        ]
+                    },
+                    {
+                        id: 't17', name: 'Recommender Systems', days: 'Days 57–58', dayN: 2, qs: 15,
+                        desc: 'Collaborative filtering, matrix factorisation, similarity, NDCG, cold-start — every consumer product at scale.',
+                        tags: [{ l: 'collab. filtering', c: 'concept' }, { l: 'matrix factorisation', c: 'concept' }, { l: 'ranking', c: 'concept' }],
+                        probs: [
+                            { id: 'p14c', n: '14', name: 'Precision and Recall at K', d: 'easy' },
+                            { id: 'p116b', n: '116', name: 'NDCG (Normalized Discounted Cumulative Gain)', d: 'medium' },
+                            { id: 'p166', n: '166', name: 'Rating Normalization', d: 'easy' },
+                            { id: 'p167', n: '167', name: 'Top-K Recommendations', d: 'easy' },
+                            { id: 'p168', n: '168', name: 'User-Based CF Prediction', d: 'medium' },
+                            { id: 'p169', n: '169', name: 'Matrix Factorization SGD Step', d: 'easy' },
+                            { id: 'p178', n: '178', name: 'Jaccard Similarity', d: 'easy' },
+                            { id: 'p179', n: '179', name: 'Item-Based CF Prediction', d: 'medium' },
+                            { id: 'p180', n: '180', name: 'Popularity Ranking', d: 'easy' },
+                            { id: 'p181', n: '181', name: 'Baseline Predictor', d: 'hard' },
+                            { id: 'p192b', n: '192', name: 'Catalog Coverage', d: 'easy' },
+                            { id: 'p193', n: '193', name: 'Adjusted Cosine Similarity', d: 'medium' },
+                            { id: 'p194b', n: '194', name: 'Hit Rate at K', d: 'easy' },
+                            { id: 'p195', n: '195', name: 'Mean Rating Imputation', d: 'medium' },
+                            { id: 'p196', n: '196', name: 'Novelty Score', d: 'medium' },
+                        ]
+                    },
+                    {
+                        id: 't18', name: 'Reinforcement Learning', days: 'Days 59–60', dayN: 2, qs: 11,
+                        desc: 'Q-learning, TD, SARSA, policy gradients, GAE, prioritised replay — most conceptually distinct area, saved for last.',
+                        tags: [{ l: 'Q-learning', c: 'concept' }, { l: 'policy gradients', c: 'concept' }, { l: 'PPO', c: 'applied' }],
+                        probs: [
+                            { id: 'p12', n: '12', name: 'Value Iteration Step', d: 'medium' },
+                            { id: 'p90', n: '90', name: 'One-Step TD Value Update', d: 'easy' },
+                            { id: 'p91', n: '91', name: 'Tabular Q-Learning (Single Update)', d: 'easy' },
+                            { id: 'p92', n: '92', name: 'ε-Greedy Action Selection', d: 'medium' },
+                            { id: 'p93', n: '93', name: 'Monte Carlo Policy Evaluation', d: 'easy' },
+                            { id: 'p94', n: '94', name: 'Advantage Computation', d: 'easy' },
+                            { id: 'p137', n: '137', name: 'Discounted Returns', d: 'easy' },
+                            { id: 'p138', n: '138', name: 'SARSA Update', d: 'easy' },
+                            { id: 'p139', n: '139', name: 'Replay Buffer Sample', d: 'easy' },
+                            { id: 'p140', n: '140', name: 'Policy Gradient Loss', d: 'medium' },
+                            { id: 'p141', n: '141', name: 'Generalized Advantage Estimation', d: 'medium' },
+                            { id: 'p142', n: '142', name: 'Prioritized Experience Replay', d: 'easy' },
+                        ]
+                    },
+                ]
+            }
+        ];
+
+        // Is plan-day d (1-based) a weekend, given day 1 = START_DOW?
+        function isWeekend(d) { const dow = (START_DOW + (d - 1)) % 7; return dow === 5 || dow === 6; }
+
+        // Smoothly allocate days (floor + effort^P spread), then roll up to
+        // sequential day ranges, stage spans, day-counts and total.
+        function computeSchedule() {
+            const topics = [];
+            PLAN.forEach(s => s.topics.forEach(t => topics.push(t)));
+            const eff = topics.map(t =>
+                t.probs.reduce((a, p) => a + (DIFF_WEIGHT[p.d] || 1), 0) * (CONCEPT_FACTOR[t.id] || 1));
+
+            // floor: ≥ MIN_DAYS and ≤ MAX_PER_DAY problems on any day
+            const days = topics.map(t => Math.max(MIN_DAYS, Math.ceil(t.probs.length / MAX_PER_DAY)));
+            let extra = TARGET_DAYS - days.reduce((a, b) => a + b, 0);
+
+            if (extra > 0) {
+                // spare days to heavier topics ∝ effort^SPREAD_P
+                const sc = eff.map(e => Math.pow(e, SPREAD_P));
+                const tot = sc.reduce((a, b) => a + b, 0);
+                const raw = sc.map(s => s / tot * extra);
+                raw.forEach((r, i) => days[i] += Math.floor(r));
+                let rem = extra - raw.reduce((a, r) => a + Math.floor(r), 0);
+                const ord = raw.map((r, i) => ({ i, f: r - Math.floor(r) })).sort((a, b) => b.f - a.f);
+                let k = 0;
+                while (rem > 0 && ord.length) { days[ord[k % ord.length].i]++; rem--; k++; }
+            } else if (extra < 0) {
+                // floors overshot — trim lightest topics (never below MIN_DAYS)
+                const ord = topics.map((t, i) => i).sort((a, b) => eff[a] - eff[b]);
+                let rem = -extra, k = 0;
+                while (rem > 0) { const i = ord[k % ord.length]; if (days[i] > MIN_DAYS) { days[i]--; rem--; } k++; }
+            }
+
+            // sequential day ranges + per-stage rollup
+            let cursor = 1, ti = 0;
+            STAGE_DAYS = []; STAGE_SPANS = [];
+            PLAN.forEach(stage => {
+                const start = cursor;
+                stage.topics.forEach(t => {
+                    const d = days[ti++];
+                    TOPIC_SCHEDULE[t.id] = { dayStart: cursor, dayEnd: cursor + d - 1 };
+                    cursor += d;
+                });
+                const end = cursor - 1;
+                STAGE_DAYS.push(end - start + 1);
+                STAGE_SPANS.push(`Days ${start}–${end}`);
+            });
+            PLAN_DAYS = cursor - 1;
+        }
+
+        function render() {
+            computeSchedule();
+            const main = document.getElementById('main');
+            main.innerHTML = '';
+            const stageColors = ['#1a1a2e', '#1a2e1a', '#1a1e2e', '#2e1a10', '#2e1a1a'];
+
+            // branding reflects the computed plan length
+            document.title = `ML Study Plan — ${PLAN_DAYS} Days`;
+            const setTxt = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+            setTxt('f-brand', `TensorTonic · ${PLAN_DAYS}-Day ML Plan`);
+            if (!ST['__startDate']) setTxt('f-days', `${PLAN_DAYS} days remaining`);
+
+            // timeline blocks: width ∝ days allocated, labels from computed spans
+            const tlBlocks = document.querySelectorAll('.tl-block');
+            tlBlocks.forEach((el, i) => {
+                if (!PLAN[i]) return;
+                el.style.flex = STAGE_DAYS[i];
+                el.textContent = `S${PLAN[i].stage} · ${STAGE_SPANS[i].toUpperCase()}`;
+            });
+
+            // ticker stage day-counts, rebuilt from the same allocation
+            const tickEl = document.getElementById('ticker-items');
+            if (tickEl) {
+                let th = PLAN.map((s, i) => `<div class="ticker-item"><div class="ticker-dot" style="background:${stageColors[i]}"></div>Stage ${s.stage} · <strong>${STAGE_DAYS[i]}</strong> days</div>`).join('');
+                th += `<div class="ticker-item"><strong id="t-done">0</strong>&nbsp;/ <span id="t-total">0</span> problems complete</div>`;
+                th += `<div class="ticker-item"><strong id="t-topics">0</strong>&nbsp;/ 18 topics done</div>`;
+                tickEl.innerHTML = th;
+            }
+
+            // shade weekend "cram days" on the timeline (day 1 = START_DOW)
+            const weEl = document.getElementById('tlp-weekends');
+            if (weEl) {
+                let h = '', d = 1;
+                while (d <= PLAN_DAYS) {
+                    if (isWeekend(d)) {
+                        let span = 1;
+                        while (d + span <= PLAN_DAYS && isWeekend(d + span)) span++;
+                        h += `<div class="tlp-we" style="left:${(d - 1) / PLAN_DAYS * 100}%;width:${span / PLAN_DAYS * 100}%"></div>`;
+                        d += span;
+                    } else d++;
+                }
+                weEl.innerHTML = h;
+            }
+
+            PLAN.forEach((stage, si) => {
+                const sd = document.createElement('div');
+                sd.className = 'stage';
+                sd.innerHTML = `
+      <div class="stage-rule">
+        <span class="stage-id">Stage 0${stage.stage}</span>
+        <span class="stage-name">${stage.label}</span>
+        <span class="stage-span ${stage.cls}">${STAGE_SPANS[si]}</span>
+      </div>
+      <div id="stage-${stage.stage}-body"></div>`;
+                main.appendChild(sd);
+
+                if (si < PLAN.length - 1) {
+                    const conn = document.createElement('div');
+                    conn.className = 'stage-connector';
+                    conn.innerHTML = `<div class="conn-line"></div><span class="conn-label">↓ unlocks stage 0${stage.stage + 1}</span>`;
+                    main.appendChild(conn);
+                }
+
+                const body = sd.querySelector(`#stage-${stage.stage}-body`);
+                stage.topics.forEach(topic => {
+                    const sched = TOPIC_SCHEDULE[topic.id] || { dayStart: 1, dayEnd: 2 };
+                    const nDays = sched.dayEnd - sched.dayStart + 1;
+                    const dayLabel = `Days ${sched.dayStart}–${sched.dayEnd}`;
+                    const sorted = sortedProbs(topic.probs);
+
+                    const card = document.createElement('div');
+                    card.className = 'topic';
+                    card.id = 'tc-' + topic.id;
+
+                    const tagsHtml = topic.tags.map(t => `<span class="tag tag-${t.c}">${t.l}</span>`).join('');
+                    const probsHtml = sorted.map(p => {
+                        const th = getC(p.id, 'theory'), so = getC(p.id, 'solve');
+                        return `<div class="prob-row${th && so ? ' both-done' : ''}" id="pr-${p.id}">
+          <span class="prob-num">${p.n}</span>
+          <span class="prob-name">${p.name}</span>
+          <span class="diff ${p.d}">${p.d}</span>
+          <div class="check-pair"><div class="chk-wrap" onclick="toggle('${p.id}','theory')">
+            <div class="chk-box${th ? ' on-theory' : ''}" id="cb-th-${p.id}">${th ? SVG_W : ''}</div>
+            <span class="chk-lbl" style="color:#5a3ec8">theory</span>
+          </div></div>
+          <div class="check-pair"><div class="chk-wrap" onclick="toggle('${p.id}','solve')">
+            <div class="chk-box${so ? ' on-solve' : ''}" id="cb-so-${p.id}">${so ? SVG_W : ''}</div>
+            <span class="chk-lbl" style="color:#2a7a4a">solve</span>
+          </div></div>
+        </div>`;
+                    }).join('');
+
+                    card.innerHTML = `
+        <div class="topic-head" onclick="toggleTopic('${topic.id}')">
+          <div>
+            <div class="topic-meta">
+              <span class="topic-name">${topic.name}</span>
+              <span class="topic-days">${dayLabel}</span>
+            </div>
+            <div class="topic-desc">${topic.desc}</div>
+            <div class="topic-tags">${tagsHtml}</div>
+          </div>
+          <div class="topic-right">
+            <span class="day-count">${nDays}</span>
+            <span class="day-count-sub">days<br>${topic.probs.length} problems</span>
+            <span class="expand-icon">▾</span>
+          </div>
+        </div>
+        <div class="topic-progress" id="tp-${topic.id}">
+          <div class="tp-bar"><div class="tp-fill" id="tf-${topic.id}" style="width:0%"></div></div>
+          <span class="tp-label" id="tl-${topic.id}">0 / ${topic.probs.length}</span>
+        </div>
+        <div class="problems">
+          <div class="prob-head">
+            <span class="ph-cell">#</span>
+            <span class="ph-cell">Problem</span>
+            <span class="ph-cell">Difficulty</span>
+            <span class="ph-cell right">Theory</span>
+            <span class="ph-cell right">Solve</span>
+          </div>
+          ${probsHtml}
+        </div>`;
+                    body.appendChild(card);
+                    updateTopicProgress(topic);
+                });
+            });
+            updateGlobal();
+        }
+
+        function toggleTopic(id) { document.getElementById('tc-' + id).classList.toggle('open'); }
+
+        function toggle(pid, type) {
+            const cur = getC(pid, type);
+            setC(pid, type, !cur);
+            const cls = type === 'theory' ? 'on-theory' : 'on-solve';
+            const cb = document.getElementById(`cb-${type === 'theory' ? 'th' : 'so'}-${pid}`);
+            if (cb) { if (!cur) { cb.classList.add(cls); cb.innerHTML = SVG_W } else { cb.classList.remove(cls); cb.innerHTML = ''; } }
+            const th = getC(pid, 'theory'), so = getC(pid, 'solve');
+            const row = document.getElementById('pr-' + pid);
+            if (row) { if (th && so) row.classList.add('both-done'); else row.classList.remove('both-done'); }
+            PLAN.forEach(stage => stage.topics.forEach(topic => {
+                if (topic.probs.find(p => p.id === pid)) updateTopicProgress(topic);
+            }));
+            updateGlobal();
+        }
+
+        function paceColor(topicId, donePct) {
+            if (!ST['__startDate']) return '#2a7a4a';
+            const sched = TOPIC_SCHEDULE[topicId];
+            if (!sched) return '#2a7a4a';
+            const daysPassed = Math.floor((Date.now() - ST['__startDate']) / (1000 * 60 * 60 * 24));
+            const currentDay = daysPassed + 1;
+            let expectedPct = 0;
+            if (currentDay >= sched.dayEnd) expectedPct = 100;
+            else if (currentDay >= sched.dayStart) {
+                expectedPct = Math.round((currentDay - sched.dayStart + 1) / (sched.dayEnd - sched.dayStart + 1) * 100);
+            } else return '#2a7a4a'; // not started yet → green (no pressure)
+            const lag = expectedPct - donePct;
+            if (lag > 30) return '#c84b2f';
+            if (lag > 10) return '#b8922a';
+            return '#2a7a4a';
+        }
+
+        function getProgress() {
+            let totalP = 0, doneP = 0;
+            PLAN.forEach(s => s.topics.forEach(t => t.probs.forEach(p => {
+                totalP++;
+                if (getC(p.id, 'theory') && getC(p.id, 'solve')) doneP++;
+            })));
+            return { totalP, doneP, pct: totalP ? Math.round(doneP / totalP * 100) : 0 };
+        }
+
+        // likelihood of finishing on time = actual progress vs time elapsed
+        function paceVerdict(expectedPct, actualPct) {
+            if (actualPct >= 100) return { c: '#2a7a4a', t: 'COMPLETE' };
+            const lag = expectedPct - actualPct;
+            if (lag > 30) return { c: '#c84b2f', t: 'BEHIND' };
+            if (lag > 10) return { c: '#b8922a', t: 'SLIPPING' };
+            return { c: '#2a7a4a', t: 'ON TRACK' };
+        }
+
+        function updateTimelineProgress() {
+            const bar = document.querySelector('.tl-progress');
+            const fill = document.getElementById('tlp-fill');
+            const today = document.getElementById('tlp-today');
+            const pctEl = document.getElementById('tlp-pct');
+            const verdict = document.getElementById('tlp-verdict');
+            const when = document.getElementById('tlp-when');
+            if (!bar || !fill || !today || !pctEl || !verdict || !when) return;
+
+            const donePct = getProgress().pct;          // fill = actual completion
+            fill.style.width = donePct + '%';
+            pctEl.textContent = donePct + '%';
+
+            if (!ST['__startDate']) {                    // not started → no today line yet
+                bar.style.setProperty('--pace', donePct > 0 ? '#2a7a4a' : '#9a9080');
+                today.style.display = 'none';
+                verdict.textContent = donePct > 0 ? '· under way' : '· not started';
+                when.textContent = `Day 1 of ${PLAN_DAYS} · begins Saturday`;
+                return;
+            }
+
+            const daysPassed = Math.floor((Date.now() - ST['__startDate']) / 86400000);
+            const currentDay = Math.min(PLAN_DAYS, daysPassed + 1);
+            const pctTime = Math.min(100, (daysPassed + 1) / PLAN_DAYS * 100);
+            const v = paceVerdict(Math.round(pctTime), donePct);   // pace = done vs elapsed
+
+            bar.style.setProperty('--pace', v.c);
+            today.style.display = 'block';
+            today.style.left = pctTime + '%';
+            verdict.textContent = '· ' + v.t.toLowerCase();
+            when.textContent = `Today · Day ${currentDay} of ${PLAN_DAYS}`;
+        }
+
+        function updateTopicProgress(topic) {
+            let done = 0;
+            topic.probs.forEach(p => { if (getC(p.id, 'theory') && getC(p.id, 'solve')) done++; });
+            const total = topic.probs.length;
+            const pct = total > 0 ? Math.round(done / total * 100) : 0;
+            const fill = document.getElementById('tf-' + topic.id);
+            const lbl = document.getElementById('tl-' + topic.id);
+            if (fill) { fill.style.width = pct + '%'; fill.style.background = paceColor(topic.id, pct); }
+            if (lbl) lbl.textContent = done + ' / ' + total;
+            const card = document.getElementById('tc-' + topic.id);
+            if (card) { if (done === total && total > 0) card.classList.add('complete'); else card.classList.remove('complete'); }
+        }
+
+        function updateGlobal() {
+            let totalP = 0, doneP = 0, doneT = 0;
+            PLAN.forEach(stage => stage.topics.forEach(topic => {
+                let td = 0;
+                topic.probs.forEach(p => { totalP++; if (getC(p.id, 'theory') && getC(p.id, 'solve')) { doneP++; td++; } });
+                if (td === topic.probs.length && topic.probs.length > 0) doneT++;
+            }));
+            const pct = totalP > 0 ? Math.round(doneP / totalP * 100) : 0;
+            document.getElementById('t-done').textContent = doneP;
+            document.getElementById('t-total').textContent = totalP;
+            document.getElementById('t-topics').textContent = doneT;
+            document.getElementById('rail-fill').style.width = pct + '%';
+
+            // global pace colour
+            let gColor = '#2a7a4a';
+            if (ST['__startDate']) {
+                const daysPassed = Math.floor((Date.now() - ST['__startDate']) / (1000 * 60 * 60 * 24));
+                const expectedPct = Math.min(100, Math.round((daysPassed + 1) / PLAN_DAYS * 100));
+                const lag = expectedPct - pct;
+                if (lag > 30) gColor = '#c84b2f';
+                else if (lag > 10) gColor = '#b8922a';
+            }
+            const rf = document.getElementById('rail-fill');
+            if (rf) rf.style.background = gColor;
+            document.getElementById('rail-pct').textContent = pct + '%';
+
+            if (ST['__startDate']) {
+                const d = new Date(ST['__startDate']);
+                document.getElementById('f-start').textContent = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                const rem = PLAN_DAYS - Math.floor((Date.now() - ST['__startDate']) / (1000 * 60 * 60 * 24));
+                document.getElementById('f-days').textContent = Math.max(0, rem) + ' days remaining';
+            }
+
+            updateTimelineProgress();
+        }
+
+        render();
+    </script>
+</body>
+
+</html>
