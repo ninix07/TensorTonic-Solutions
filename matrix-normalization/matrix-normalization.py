@@ -7,13 +7,10 @@ def matrix_normalization(matrix, axis=None, norm_type='l2'):
    
     norm_factor =1
     matrix = np.asarray(matrix)
-    if np.ndim(matrix)!=2:
-        return None
-    if axis not  in [0,1,None]:
+    if np.ndim(matrix)!=2 or axis not in [0,1,None] :
         return None
     if norm_type == 'l2':
         norm_factor = np.linalg.norm(matrix, axis =axis,keepdims=True)
-
     elif norm_type == 'l1':
         norm_factor = np.linalg.norm(matrix, ord=1, axis=axis,keepdims=True)
     elif norm_type == 'max':
