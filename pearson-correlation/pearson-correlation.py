@@ -1,0 +1,16 @@
+import numpy as np
+
+def pearson_correlation(X):
+    """
+    Compute Pearson correlation matrix from dataset X.
+    """
+    
+    X = np.asarray(X)
+    N=X.shape[0]
+    mean = np.mean(X,axis=0)
+    X_centered = X - mean 
+    cov = np.dot(X_centered.T,X_centered) / (N-1) 
+    std = np.std(X,axis=0,ddof=1)
+
+    return cov / np.outer(std,std)
+   
