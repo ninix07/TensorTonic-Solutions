@@ -13,25 +13,20 @@ def tfidf_vectorizer(documents):
     vocab = sorted(vocab)
     vocab_len= len(vocab)
     doc_len= len(documents)
-    matrix= np.zeros((doc_len, vocab_len))
-    vocab_index = {word: i for i,word in enumerate(vocab)}
-    df={}
-    document_counters=[]
-    
-    for doc in documents:
-        count_df = Counter(doc)
-        document_counters.append(count_df)
-        for key in count_df.keys():
-            df[key] = df.get(key,0) +1
-    
-    idf={}
-    for word in vocab:
-        idf[word] = np.log(doc_len / df[word])
+    vocab_index ={word:i for i,word in enumerate(vocab)}
 
-    for i,doc in enumerate(documents):
-        count_df= document_counters[i]
-        for key,val in count_df.items():
-            tf = val/len(doc)
-            matrix[i][vocab_index[key]]= tf *idf[key]
+    tf = np.zeros((doc_len,vocab_len))
+    df = np.zeros(vocab_len)
 
-    return (matrix,vocab)
+    for i, doc in enumerate(documents):
+        count= Counter(doc)
+        for word,freq in count.items():
+            j = vocab_index[word]
+            tf[i,j]= freq/len(doc)
+            df[j]+=1
+
+    idf = np.log(doc_len/df)
+    idf[df==0.0] = 0.0
+    
+    tf_idf = tf * idf
+    return tf_idf, vocab
