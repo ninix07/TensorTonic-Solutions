@@ -11,13 +11,15 @@ def bm25_score(query_tokens, docs, k1=1.2, b=0.75):
     avg_doc_len = sum(len(doc) for doc in docs) / len(docs) if docs else 0
     scores = np.zeros(number_of_docs)
     df= {}
+    counters= []
     for doc in docs:
         count_df = Counter(doc)
         for words in count_df.keys():
             df[words] = df.get(words,0) +1
+        counters.append(count_df)
 
     for i, doc in enumerate(docs):
-        count_df = Counter(doc)
+        count_df = counters[i]
         total = 0
         for query in query_tokens:
              if query not in count_df.keys():
