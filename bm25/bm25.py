@@ -7,30 +7,33 @@ def bm25_score(query_tokens, docs, k1=1.2, b=0.75):
     Returns numpy array of BM25 scores for each document.
     """
     # Write code here
-    number_of_docs = len(docs)
-    avg_doc_len = sum(len(doc) for doc in docs) / len(docs) if docs else 0
-    scores = np.zeros(number_of_docs)
-    df= {}
-    counters= []
-    for doc in docs:
-        count_df = Counter(doc)
-        for words in count_df.keys():
-            df[words] = df.get(words,0) +1
-        counters.append(count_df)
+    N= len(docs)
+    docs_len =np.array([len(doc) for doc in docs])
+    avg_doc_len = np.mean(docs_len)
 
-    for i, doc in enumerate(docs):
-        count_df = counters[i]
-        total = 0
-        for query in query_tokens:
-             if query not in count_df.keys():
-                 idf = 0 
-             else:
-                 numerator = number_of_docs - df[query] +0.5
-                 denominator = df[query] +0.5 
-                 idf = np.log((numerator/denominator)+1)
+    unique_queries = list(set(query_tokens))
 
-                 curr_score = idf * (count_df[query] *(k1+1)) / (count_df[query] + k1 * ( 1-b + (b*len(doc)/avg_doc_len)))
-                 total+=curr_score
-        scores[i] = total
+    tf = np.zeros((N,len(unique_queries)))
+    df= np.zeros(len(unique_queries))
+
+    for i,doc in enumerate(docs):
+        counts= Counter(doc)
+        for j, query in enumerate(unique_queries):
+            freq = counts.get(query,0)
+            if freq:
+                tf[i,j] = freq
+                df[j]+=1
+
+
+    idf = np.log(((N-df +0.5)/(df+0.5))+1)
+
+    idf[df==0] =0.0
+
+    numerator = tf *(k1+1)
+    denominator = tf + k1*(1-b + (b*docs_len[:,None]/avg_doc_len))
+
+    scores = np.sum((idf*numerator/denominator) , axis=1)
+
     return scores
+    
             
