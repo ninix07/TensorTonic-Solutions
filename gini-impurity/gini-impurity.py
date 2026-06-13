@@ -10,25 +10,25 @@ def gini_impurity(y_left, y_right):
     total_n = right_len +left_len
     if total_n == 0:
         return 0.0
-    gini_right =0
-    gini_left= 0
+    y_right = np.asarray(y_right)
+    y_left = np.asarray(y_left)
     # compute right gini 
-    if right_len > 0:
-        y_right = np.asarray(y_right)
-        _,count = np.unique(y_right,return_counts= True)
+    def compute_gini(arr):
+        if len(arr) == 0 :
+            return 0 
+
+        _,count = np.unique(arr,return_counts= True)
         
-        prob_right = count/np.sum(count)
+        prob = count/np.sum(count)
         
-        gini_right = 1- np.sum(prob_right **2)
+        return 1- np.sum(prob **2)
+
+    gini_right = compute_gini(y_right)
+    gini_left = compute_gini(y_left)
+
     
-     # compute right gini 
-    if left_len > 0:
-        y_left = np.asarray(y_left)
-        _,count = np.unique(y_left,return_counts= True)
-        
-        prob_left = count/np.sum(count) 
-        
-        gini_left = 1- np.sum(prob_left **2)
+    
+     
     
     
     return  (left_len * gini_left  + right_len *gini_right ) / total_n
