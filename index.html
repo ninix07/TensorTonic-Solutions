@@ -105,6 +105,50 @@
             flex-shrink: 0
         }
 
+        /* ── STATS BAR ── */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border-bottom: 1px solid var(--rule);
+            background: var(--paper);
+        }
+
+        .stat-block {
+            padding: 18px 28px;
+            border-right: 1px solid var(--rule);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-block:last-child { border-right: none; }
+
+        .stat-num {
+            font-family: var(--serif);
+            font-size: 30px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--ink);
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .stat-num-sub {
+            font-family: var(--mono);
+            font-size: 13px;
+            color: var(--rule2);
+            font-weight: 400;
+        }
+
+        .stat-lbl {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--rule2);
+        }
+
         /* ── PROGRESS RAIL ── */
         .progress-rail {
             padding: 0 56px;
@@ -160,9 +204,11 @@
 
         .tl-block {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 14px 0;
+            gap: 5px;
+            padding: 22px 0;
             font-family: var(--mono);
             font-size: 10px;
             letter-spacing: .1em;
@@ -171,6 +217,14 @@
             cursor: default;
             transition: opacity .2s;
             border-right: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .tl-block-name {
+            font-family: var(--serif);
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .85);
+            letter-spacing: 0;
         }
 
         .tl-block:last-child {
@@ -262,6 +316,36 @@
             text-transform: uppercase;
             color: var(--rule2);
             white-space: nowrap;
+        }
+
+        .tlp-foot {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--rule2);
+        }
+
+        .tlp-foot strong {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        .tlp-target {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--rule2);
+            white-space: nowrap;
+        }
+
+        .tlp-target strong {
+            color: var(--ink);
+            font-weight: 500;
         }
 
         /* the bar (acts as the track) */
@@ -805,6 +889,7 @@
                 <span class="tlp-pct-sub">complete</span>
                 <span class="tlp-verdict" id="tlp-verdict">· not started</span>
             </span>
+            <span class="tlp-target" id="tlp-target"></span>
             <span class="tlp-when" id="tlp-when">Day 1 of 60 · begins Saturday</span>
         </div>
         <div class="tlp-bar">
@@ -812,30 +897,29 @@
             <div class="tlp-fill" id="tlp-fill"></div>
             <div class="tlp-today" id="tlp-today"></div>
         </div>
+        <div class="tlp-foot" id="tlp-foot" style="display:none">
+            <span id="tlp-daily"></span>
+            <span id="tlp-proj"></span>
+        </div>
     </div>
 
-    <!-- Progress rail -->
-    <div class="ticker">
-        <div class="ticker-label">PROGRESS</div>
-        <div class="ticker-items" id="ticker-items">
-            <div class="ticker-item">
-                <div class="ticker-dot" style="background:#1a1a2e"></div>Stage 1 · <strong>8</strong> days
-            </div>
-            <div class="ticker-item">
-                <div class="ticker-dot" style="background:#1a2e1a"></div>Stage 2 · <strong>12</strong> days
-            </div>
-            <div class="ticker-item">
-                <div class="ticker-dot" style="background:#1a1e2e"></div>Stage 3 · <strong>14</strong> days
-            </div>
-            <div class="ticker-item">
-                <div class="ticker-dot" style="background:#2e1a10"></div>Stage 4 · <strong>14</strong> days
-            </div>
-            <div class="ticker-item">
-                <div class="ticker-dot" style="background:#2e1a1a"></div>Stage 5 · <strong>12</strong> days
-            </div>
-            <div class="ticker-item"><strong id="t-done">0</strong>&nbsp;/ <span id="t-total">0</span> problems complete
-            </div>
-            <div class="ticker-item"><strong id="t-topics">0</strong>&nbsp;/ 18 topics done</div>
+    <!-- Stats bar -->
+    <div class="stats-bar">
+        <div class="stat-block">
+            <div class="stat-num"><span id="s-done">0</span><span class="stat-num-sub">&thinsp;/ <span id="s-total">0</span></span></div>
+            <div class="stat-lbl">Problems Complete</div>
+        </div>
+        <div class="stat-block">
+            <div class="stat-num"><span id="s-topics">0</span><span class="stat-num-sub">&thinsp;/ 18</span></div>
+            <div class="stat-lbl">Topics Done</div>
+        </div>
+        <div class="stat-block">
+            <div class="stat-num"><span id="s-theory">0</span></div>
+            <div class="stat-lbl">Theory Done</div>
+        </div>
+        <div class="stat-block">
+            <div class="stat-num"><span id="s-solve">0</span></div>
+            <div class="stat-lbl">Solved</div>
         </div>
     </div>
 
@@ -1358,15 +1442,13 @@
             tlBlocks.forEach((el, i) => {
                 if (!PLAN[i]) return;
                 el.style.flex = STAGE_DAYS[i];
-                el.textContent = `S${PLAN[i].stage} · ${STAGE_SPANS[i].toUpperCase()}`;
+                el.innerHTML = `<span class="tl-block-name">${PLAN[i].label}</span><span>S${PLAN[i].stage} · ${STAGE_SPANS[i].toUpperCase()}</span>`;
             });
 
             // ticker stage day-counts, rebuilt from the same allocation
             const tickEl = document.getElementById('ticker-items');
             if (tickEl) {
                 let th = PLAN.map((s, i) => `<div class="ticker-item"><div class="ticker-dot" style="background:${stageColors[i]}"></div>Stage ${s.stage} · <strong>${STAGE_DAYS[i]}</strong> days</div>`).join('');
-                th += `<div class="ticker-item"><strong id="t-done">0</strong>&nbsp;/ <span id="t-total">0</span> problems complete</div>`;
-                th += `<div class="ticker-item"><strong id="t-topics">0</strong>&nbsp;/ 18 topics done</div>`;
                 tickEl.innerHTML = th;
             }
 
@@ -1536,11 +1618,14 @@
             fill.style.width = donePct + '%';
             pctEl.textContent = donePct + '%';
 
+            const targetEl = document.getElementById('tlp-target');
+
             if (!ST['__startDate']) {                    // not started → no today line yet
                 bar.style.setProperty('--pace', donePct > 0 ? '#2a7a4a' : '#9a9080');
                 today.style.display = 'none';
                 verdict.textContent = donePct > 0 ? '· under way' : '· not started';
                 when.textContent = `Day 1 of ${PLAN_DAYS} · begins Saturday`;
+                if (targetEl) targetEl.innerHTML = '';
                 return;
             }
 
@@ -1561,11 +1646,32 @@
             const schedExpectedPct = totalP2 > 0 ? Math.round(expectedDoneP2 / totalP2 * 100) : 0;
             const v = paceVerdict(schedExpectedPct, donePct);   // pace = done vs schedule
 
+            // find which topic currentDay falls in
+            let nowTopic = null;
+            PLAN.forEach(s => s.topics.forEach(t => {
+                const sched = TOPIC_SCHEDULE[t.id];
+                if (sched && currentDay >= sched.dayStart && currentDay <= sched.dayEnd) nowTopic = t;
+            }));
+            if (!nowTopic) {
+                let minStart = Infinity;
+                PLAN.forEach(s => s.topics.forEach(t => {
+                    const sched = TOPIC_SCHEDULE[t.id];
+                    if (sched && sched.dayStart > currentDay && sched.dayStart < minStart) { minStart = sched.dayStart; nowTopic = t; }
+                }));
+            }
+
             bar.style.setProperty('--pace', v.c);
             today.style.display = 'block';
             today.style.left = pctTime + '%';
             verdict.textContent = '· ' + v.t.toLowerCase();
             when.textContent = `Today · Day ${currentDay} of ${PLAN_DAYS}`;
+            let nowLabel = '—';
+            if (nowTopic) {
+                const sorted = sortedProbs(nowTopic.probs);
+                const nextProb = sorted.find(p => !(getC(p.id, 'theory') && getC(p.id, 'solve')));
+                nowLabel = nextProb ? `${nowTopic.name} · ${nextProb.name}` : `${nowTopic.name} · all done`;
+            }
+            if (targetEl) targetEl.innerHTML = `target <strong>${schedExpectedPct}%</strong> · now <strong>${nowLabel}</strong>`;
         }
 
         function updateTopicProgress(topic) {
@@ -1586,25 +1692,28 @@
         }
 
         function updateGlobal() {
-            let totalP = 0, doneP = 0, actualDoneP = 0, doneT = 0;
+            let totalP = 0, doneP = 0, actualDoneP = 0, doneT = 0, theoryCount = 0, solveCount = 0;
             PLAN.forEach(stage => stage.topics.forEach(topic => {
                 let td = 0;
                 topic.probs.forEach(p => {
                     totalP++;
                     const th = getC(p.id, 'theory'), so = getC(p.id, 'solve');
                     doneP += (th ? 0.6 : 0) + (so ? 0.4 : 0);
+                    if (th) theoryCount++;
+                    if (so) solveCount++;
                     if (th && so) { actualDoneP++; td++; }
                 });
                 if (td === topic.probs.length && topic.probs.length > 0) doneT++;
             }));
             const pct = totalP > 0 ? Math.round(doneP / totalP * 100) : 0;
-            document.getElementById('t-done').textContent = actualDoneP;
-            document.getElementById('t-total').textContent = totalP;
-            document.getElementById('t-topics').textContent = doneT;
+            const setEl = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+            setEl('s-done', actualDoneP); setEl('s-total', totalP);
+            setEl('s-topics', doneT); setEl('s-theory', theoryCount); setEl('s-solve', solveCount);
             document.getElementById('rail-fill').style.width = pct + '%';
 
             // global pace colour — schedule-aware expected progress
             let gColor = '#9a9080'; // neutral — not started yet
+            const foot = document.getElementById('tlp-foot');
             if (ST['__startDate']) {
                 const daysPassed = Math.floor((Date.now() - ST['__startDate']) / (1000 * 60 * 60 * 24));
                 const currentDay = daysPassed + 1;
@@ -1623,7 +1732,40 @@
                 if (lag > 5) gColor = '#c84b2f';
                 else if (lag > 0) gColor = '#b8922a';
                 else gColor = '#2a7a4a';
+
+                // daily target
+                const gap = expectedDoneP - doneP;
+                const dailyEl = document.getElementById('tlp-daily');
+                if (dailyEl) {
+                    if (gap <= 0) dailyEl.innerHTML = `today · <strong style="color:#2a7a4a">on track</strong>`;
+                    else dailyEl.innerHTML = `today · do <strong>~${Math.ceil(gap)}</strong> more problem${Math.ceil(gap) > 1 ? 's' : ''}`;
+                }
+
+                // finish projection
+                const rate = daysPassed > 0 ? doneP / daysPassed : 0;
+                const projEl = document.getElementById('tlp-proj');
+                if (projEl) {
+                    if (rate <= 0) {
+                        projEl.innerHTML = `finish · <strong>—</strong>`;
+                    } else {
+                        const remaining = totalP - doneP;
+                        const daysLeft = Math.ceil(remaining / rate);
+                        const finishMs = ST['__startDate'] + (daysPassed + daysLeft) * 86400000;
+                        const deadlineMs = ST['__startDate'] + PLAN_DAYS * 86400000;
+                        const diffDays = Math.round((finishMs - deadlineMs) / 86400000);
+                        const dateStr = new Date(finishMs).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                        const diffStr = diffDays > 0 ? `<strong style="color:#c84b2f">${diffDays}d over</strong>`
+                            : diffDays < 0 ? `<strong style="color:#2a7a4a">${Math.abs(diffDays)}d early</strong>`
+                            : `<strong style="color:#2a7a4a">on time</strong>`;
+                        projEl.innerHTML = `finish · <strong>${dateStr}</strong> · ${diffStr}`;
+                    }
+                }
+
+                if (foot) foot.style.display = 'flex';
+            } else {
+                if (foot) foot.style.display = 'none';
             }
+
             const rf = document.getElementById('rail-fill');
             if (rf) rf.style.background = gColor;
             const rp = document.getElementById('rail-pct');
