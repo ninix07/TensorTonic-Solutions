@@ -149,51 +149,6 @@
             color: var(--rule2);
         }
 
-        /* ── PROGRESS RAIL ── */
-        .progress-rail {
-            padding: 0 56px;
-            border-bottom: 1px solid var(--rule);
-            background: var(--paper);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            height: 52px;
-        }
-
-        .progress-tag {
-            font-family: var(--mono);
-            font-size: 10px;
-            letter-spacing: .14em;
-            text-transform: uppercase;
-            color: var(--rule2);
-            white-space: nowrap;
-            width: 88px;
-        }
-
-        .rail-track {
-            flex: 1;
-            height: 2px;
-            background: var(--rule);
-            position: relative;
-        }
-
-        .rail-fill {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            background: var(--accent);
-            transition: width .5s ease;
-            width: 0%;
-        }
-
-        .rail-pct {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--accent);
-            width: 48px;
-            text-align: right;
-        }
 
         /* ── STAGE TIMELINE ── */
         .timeline-strip {
@@ -321,31 +276,71 @@
         .tlp-foot {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
+            gap: 32px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--rule);
+        }
+
+        .tlp-foot-block {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .tlp-foot-lbl {
             font-family: var(--mono);
-            font-size: 10px;
-            letter-spacing: .08em;
+            font-size: 9px;
+            letter-spacing: .14em;
             text-transform: uppercase;
             color: var(--rule2);
         }
 
-        .tlp-foot strong {
-            color: var(--ink);
+        .tlp-foot-val {
+            font-family: var(--sans);
+            font-size: 13px;
             font-weight: 500;
+            color: var(--ink);
+            line-height: 1.3;
         }
+
+        .tlp-foot-val.today { color: var(--accent); }
+        .tlp-foot-val.next  { color: var(--accent2); }
 
         .tlp-target {
-            font-family: var(--mono);
-            font-size: 10px;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            color: var(--rule2);
-            white-space: nowrap;
+            display: flex;
+            gap: 24px;
         }
 
-        .tlp-target strong {
-            color: var(--ink);
+        .tlp-target-block {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .tlp-target-lbl {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--rule2);
+        }
+
+        .tlp-target-val {
+            font-family: var(--sans);
+            font-size: 12px;
             font-weight: 500;
+            color: var(--ink);
+            line-height: 1.3;
+        }
+
+        .tlp-target-val.today {
+            color: var(--accent);
+        }
+
+        .tlp-target-val.next {
+            color: var(--accent2);
         }
 
         /* the bar (acts as the track) */
@@ -897,10 +892,7 @@
             <div class="tlp-fill" id="tlp-fill"></div>
             <div class="tlp-today" id="tlp-today"></div>
         </div>
-        <div class="tlp-foot" id="tlp-foot" style="display:none">
-            <span id="tlp-daily"></span>
-            <span id="tlp-proj"></span>
-        </div>
+        <div class="tlp-foot" id="tlp-foot" style="display:none"></div>
     </div>
 
     <!-- Stats bar -->
@@ -921,14 +913,6 @@
             <div class="stat-num"><span id="s-solve">0</span></div>
             <div class="stat-lbl">Solved</div>
         </div>
-    </div>
-
-    <div class="progress-rail">
-        <span class="progress-tag">Overall</span>
-        <div class="rail-track">
-            <div class="rail-fill" id="rail-fill"></div>
-        </div>
-        <span class="rail-pct" id="rail-pct">0%</span>
     </div>
 
     <main id="main"></main>
@@ -1646,32 +1630,80 @@
             const schedExpectedPct = totalP2 > 0 ? Math.round(expectedDoneP2 / totalP2 * 100) : 0;
             const v = paceVerdict(schedExpectedPct, donePct);   // pace = done vs schedule
 
-            // find which topic currentDay falls in
-            let nowTopic = null;
-            PLAN.forEach(s => s.topics.forEach(t => {
-                const sched = TOPIC_SCHEDULE[t.id];
-                if (sched && currentDay >= sched.dayStart && currentDay <= sched.dayEnd) nowTopic = t;
-            }));
-            if (!nowTopic) {
-                let minStart = Infinity;
-                PLAN.forEach(s => s.topics.forEach(t => {
-                    const sched = TOPIC_SCHEDULE[t.id];
-                    if (sched && sched.dayStart > currentDay && sched.dayStart < minStart) { minStart = sched.dayStart; nowTopic = t; }
-                }));
-            }
+            // build ordered problem list for target lookups
+            const allProbs = [];
+            PLAN.forEach(s => s.topics.forEach(t =>
+                sortedProbs(t.probs).forEach(p => allProbs.push({ ...p, topicName: t.name }))
+            ));
+
+            // finish-by-today: problem at position ceil(expectedDoneP2)
+            const targetIdx = Math.min(Math.ceil(expectedDoneP2) - 1, allProbs.length - 1);
+            const targetProb = targetIdx >= 0 ? allProbs[targetIdx] : null;
+            const todayLabel = targetProb ? `${targetProb.topicName} · ${targetProb.name}` : '—';
+
+            // next up: first problem not yet fully done
+            const nextProb = allProbs.find(p => !(getC(p.id, 'theory') && getC(p.id, 'solve')));
+            const nextLabel = nextProb ? `${nextProb.topicName} · ${nextProb.name}` : 'All done!';
 
             bar.style.setProperty('--pace', v.c);
             today.style.display = 'block';
             today.style.left = pctTime + '%';
             verdict.textContent = '· ' + v.t.toLowerCase();
             when.textContent = `Today · Day ${currentDay} of ${PLAN_DAYS}`;
-            let nowLabel = '—';
-            if (nowTopic) {
-                const sorted = sortedProbs(nowTopic.probs);
-                const nextProb = sorted.find(p => !(getC(p.id, 'theory') && getC(p.id, 'solve')));
-                nowLabel = nextProb ? `${nowTopic.name} · ${nextProb.name}` : `${nowTopic.name} · all done`;
+            if (targetEl) targetEl.innerHTML = `target <strong>${schedExpectedPct}%</strong>`;
+
+            // finish date — two projections: required pace vs current pace
+            const { doneP: dp, totalP: tp } = getProgress();
+            let projHTML = '<span class="tlp-foot-val">—</span>';
+            if (dp > 0) {
+                const remaining = tp - dp;
+                const reqRate = tp / PLAN_DAYS;
+                const deadlineMs = ST['__startDate'] + PLAN_DAYS * 86400000;
+
+                const fmt = (daysFromStart) => {
+                    const ms = ST['__startDate'] + daysFromStart * 86400000;
+                    const diff = Math.round((ms - deadlineMs) / 86400000);
+                    const date = new Date(ms).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                    const tag = diff > 0
+                        ? `<span style="color:var(--accent)">+${diff}d</span>`
+                        : diff < 0
+                        ? `<span style="color:#2a7a4a">${diff}d</span>`
+                        : `<span style="color:#2a7a4a">on time</span>`;
+                    return `${date} ${tag}`;
+                };
+
+                const reqDaysLeft = Math.ceil(remaining / reqRate);
+                const reqLine = `<span class="tlp-foot-val" style="font-size:11px"><span style="color:var(--rule2);font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase">req pace · </span>${fmt(daysPassed + reqDaysLeft)}</span>`;
+
+                let curLine = '';
+                if (daysPassed >= 3) {
+                    const curRate = dp / daysPassed;
+                    const curDaysLeft = Math.ceil(remaining / curRate);
+                    curLine = `<span class="tlp-foot-val" style="font-size:11px"><span style="color:var(--rule2);font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase">cur pace · </span>${fmt(daysPassed + curDaysLeft)}</span>`;
+                } else {
+                    curLine = `<span class="tlp-foot-val" style="font-size:11px;color:var(--rule2)"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase">cur pace · </span>need ${3 - daysPassed}d more data</span>`;
+                }
+
+                projHTML = `<div style="display:flex;flex-direction:row;gap:20px;align-items:baseline">${reqLine}${curLine}</div>`;
             }
-            if (targetEl) targetEl.innerHTML = `target <strong>${schedExpectedPct}%</strong> · now <strong>${nowLabel}</strong>`;
+
+            const foot = document.getElementById('tlp-foot');
+            if (foot) {
+                foot.style.display = 'flex';
+                foot.innerHTML = `
+                    <div class="tlp-foot-block">
+                        <span class="tlp-foot-lbl">Finish by today</span>
+                        <span class="tlp-foot-val today">${todayLabel}</span>
+                    </div>
+                    <div class="tlp-foot-block">
+                        <span class="tlp-foot-lbl">Next question</span>
+                        <span class="tlp-foot-val next">${nextLabel}</span>
+                    </div>
+                    <div class="tlp-foot-block">
+                        <span class="tlp-foot-lbl">Expected finish</span>
+                        ${projHTML}
+                    </div>`;
+            }
         }
 
         function updateTopicProgress(topic) {
@@ -1709,11 +1741,9 @@
             const setEl = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
             setEl('s-done', actualDoneP); setEl('s-total', totalP);
             setEl('s-topics', doneT); setEl('s-theory', theoryCount); setEl('s-solve', solveCount);
-            document.getElementById('rail-fill').style.width = pct + '%';
 
             // global pace colour — schedule-aware expected progress
             let gColor = '#9a9080'; // neutral — not started yet
-            const foot = document.getElementById('tlp-foot');
             if (ST['__startDate']) {
                 const daysPassed = Math.floor((Date.now() - ST['__startDate']) / (1000 * 60 * 60 * 24));
                 const currentDay = daysPassed + 1;
@@ -1732,44 +1762,8 @@
                 if (lag > 5) gColor = '#c84b2f';
                 else if (lag > 0) gColor = '#b8922a';
                 else gColor = '#2a7a4a';
-
-                // daily target
-                const gap = expectedDoneP - doneP;
-                const dailyEl = document.getElementById('tlp-daily');
-                if (dailyEl) {
-                    if (gap <= 0) dailyEl.innerHTML = `today · <strong style="color:#2a7a4a">on track</strong>`;
-                    else dailyEl.innerHTML = `today · do <strong>~${Math.ceil(gap)}</strong> more problem${Math.ceil(gap) > 1 ? 's' : ''}`;
-                }
-
-                // finish projection
-                const rate = daysPassed > 0 ? doneP / daysPassed : 0;
-                const projEl = document.getElementById('tlp-proj');
-                if (projEl) {
-                    if (rate <= 0) {
-                        projEl.innerHTML = `finish · <strong>—</strong>`;
-                    } else {
-                        const remaining = totalP - doneP;
-                        const daysLeft = Math.ceil(remaining / rate);
-                        const finishMs = ST['__startDate'] + (daysPassed + daysLeft) * 86400000;
-                        const deadlineMs = ST['__startDate'] + PLAN_DAYS * 86400000;
-                        const diffDays = Math.round((finishMs - deadlineMs) / 86400000);
-                        const dateStr = new Date(finishMs).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-                        const diffStr = diffDays > 0 ? `<strong style="color:#c84b2f">${diffDays}d over</strong>`
-                            : diffDays < 0 ? `<strong style="color:#2a7a4a">${Math.abs(diffDays)}d early</strong>`
-                            : `<strong style="color:#2a7a4a">on time</strong>`;
-                        projEl.innerHTML = `finish · <strong>${dateStr}</strong> · ${diffStr}`;
-                    }
-                }
-
-                if (foot) foot.style.display = 'flex';
-            } else {
-                if (foot) foot.style.display = 'none';
             }
 
-            const rf = document.getElementById('rail-fill');
-            if (rf) rf.style.background = gColor;
-            const rp = document.getElementById('rail-pct');
-            if (rp) { rp.textContent = pct + '%'; rp.style.color = gColor; }
 
             if (ST['__startDate']) {
                 const d = new Date(ST['__startDate']);
