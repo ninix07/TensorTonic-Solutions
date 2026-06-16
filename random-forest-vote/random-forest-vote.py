@@ -12,13 +12,11 @@ def random_forest_vote(predictions):
 
     for i in range(num_of_columns):
         curr_sample = predictions[:,i]
-        count_df = Counter(curr_sample)
+        counts = np.bincount(curr_sample)
 
-        max_count= max(count_df.values())
+        max_count= counts.max()
 
-        classes=[key for key,val in count_df.items() if val ==max_count ]
-
-        class_pred[i]= min(classes)
+        class_pred[i]= np.min(np.where(counts==max_count))
 
 
     return class_pred.tolist()
