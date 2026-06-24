@@ -8,4 +8,4 @@ def cyclic_encoding(values, period):
     values = 2* np.pi * values /period
 
 
-    return [[np.sin(v),np.cos(v)] for v in values]
+    return np.column_stack((np.sin(values), np.cos(values))).tolist()
