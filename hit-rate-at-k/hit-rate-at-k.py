@@ -4,8 +4,7 @@ def hit_rate_at_k(recommendations, ground_truth, k):
     """
     # Write code here
     hit =0 
-    for i,t in enumerate(ground_truth):
-        if t[0] in recommendations[i][:k]:
-            hit+=1
+
+    hit = sum([1 if t[0] in recommendations[i][:k] else 0 for i,t in enumerate(ground_truth)])
 
     return hit/len(ground_truth)
