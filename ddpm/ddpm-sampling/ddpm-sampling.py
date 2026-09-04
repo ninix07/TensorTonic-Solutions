@@ -17,20 +17,21 @@ def ddpm_sample(
     alphas_cumprod: npt.NDArray[np.float64] = np.cumprod(alphas)
     T = len(betas)
     curr_x = x_T
-    for i, t in enumerate(range(T, 0, -1)):
+    for i, t in enumerate(range(T - 1, -1, -1)):
         print(f"timestep: {t}")
-        beta_t = betas[t - 1]
+        beta_t = betas[t]
         epsilon_t = epsilon_preds[i]
 
         # Compute the mean and variance for the current timestep
-        mean_t = (1 / np.sqrt(alphas[t - 1])) * (
-            curr_x - (beta_t * epsilon_t / np.sqrt(1 - alphas_cumprod[t - 1]))
+        mean_t = (1 / np.sqrt(alphas[t])) * (
+            curr_x - (beta_t * epsilon_t / np.sqrt(1 - alphas_cumprod[t]))
         )
 
         var_t = beta_t
 
         # Sample from the Gaussian distribution
-        curr_x = mean_t + np.sqrt(var_t) * z_values[i] if t > 1 else mean_t
+        curr_x = mean_t + np.sqrt(var_t) * z_values[i] if t > 0 else mean_t
 
     return np.round(curr_x, 4).tolist()
+
 
